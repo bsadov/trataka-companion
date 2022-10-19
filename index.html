@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trakata Companion</title>
+</head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+    * {
+        font-family: 'Lato', sans-serif;
+    }
+
+    body{
+        display: flex;
+        justify-content: center;
+    }
+
+    ul{
+        list-style: circle;
+    }
+
+    li b{
+        font-size: 0.8em;
+    }
+
+    p{
+        font-size: 2em;
+    }
+
+    img {
+        height: 100vh;
+    }
+
+    #nav{
+        width: 300px;
+    }
+</style>
+
+<body>
+<div id="nav">
+<h1>Trakata Companion</h1>
+
+<p>STAGE: <b id="stage">STARE</b></p>
+
+<ul>
+<li>In <b>SECONDS</b>, set how long <b>EACH</b> meditation interval will last</li>
+<li>You'll stare at the image for the allotted time</li>
+<li>A bell will chime indicating the start of the closed eye portion</li>
+<li>A second bell will chime indication end of meditation</li>
+</ul>
+
+<input type=number id=inputValue value=120 min=10>
+<br>
+<button id=startButton onclick="startTimer()">Start</button>
+<button id=stopButton onclick="stopTimer()">Stop</button>
+<button id=resetButton onclick="resetTimer()">Reset</button>
+</div>
+<img id="mainImage" src="./Sri Yantra.jpg"></div>
+</body>
+</html>
+
+<script>
+    let timer;
+    let startingValue;
+    let stoppedValue;
+    let firstStage = true;
+    const input = document.getElementById('inputValue');
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const resetButton = document.getElementById('resetButton');
+    const stageEle = document.getElementById('stage');
+    const mainImage = document.getElementById('mainImage')
+    var audio = new Audio('./bell - edgepixel - pixabay.mp3');
+
+    disable(stopButton);
+    disable(resetButton);
+
+    function startTimer(){
+        if(stoppedValue != input.value){
+            startingValue = input.value;
+        }
+        clearInterval(timer);
+        timer = setInterval(myTimer, 1000);
+        enable(stopButton);
+        enable(resetButton);
+        disable(startButton);
+    }
+    
+    function myTimer() {
+    input.value--;
+    if(input.value == 0){
+        if(firstStage){
+            audio.play();
+            firstStage = false;
+            input.value = startingValue;
+            stageEle.textContent = "EYES CLOSED";
+            mainImage.style.filter = "brightness(0.2)";
+            return;
+            }
+        clearInterval(timer);
+        audio.play();
+        stageEle.textContent = "MEDITATION COMPLETE";
+        mainImage.style.filter = "";
+        disable(stopButton);
+        }
+    }
+
+    function stopTimer(){
+        stoppedValue = input.value;
+        clearInterval(timer);
+        enable(startButton);
+        disable(stopButton);
+    }
+
+    function resetTimer(){
+        firstStage = true;
+        input.value = startingValue;
+        clearInterval(timer);
+        enable(startButton);
+        disable(resetButton);
+        disable(stopButton);
+        stageEle.textContent = "STARE";
+        mainImage.style.filter = "";
+    }
+
+    function disable(element){ element.setAttribute("disabled",""); }
+    function enable(element){ element.removeAttribute("disabled"); }
+</script>
